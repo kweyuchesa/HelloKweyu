@@ -1,0 +1,35 @@
+# Formattinng data
+data['state'] = data['state'].str.upper() # Capitalize the whole thing
+data['state'] = data['state'].replace( # Changing the format of the string
+                                      to_replace=["CA", "C.A", "CALI"], 
+                                      value=["CALIFORNIA", "CALIFORNIA", "CALIFORNIA"])
+
+# Dates and times are quite common in large datasets
+# Converting all strings to datetime objects is good standardisation practice
+# Here, the data["time"] strings will look like "2019-01-15", which is exactly
+# how we set the "format" variable below
+data["time"] = pd.to_datetime(data["time"], format='%Y-%m-%d', errors='ignore')
+
+# Discretising continous variables
+# Height is in inches and we make a few bins with labels
+data["height"] = pd.cut(data['height'],
+                        bins=[0, 48, 60, 66, 72, 78, 100], 
+                        labels=["Super Short","Short", "Average", "Above Average","Tall","Super Tall"])
+
+# Replace string values with some floats that our 
+# ML models will be able to handle
+mapping = {'Adult Woman': 1, 'Adult Man': 2, "Child": 3}
+data"Person" = data["Person"].replace(mapping)
+
+# Filling in NaN values of a particular feature variable
+avg_height = 67 # Maybe this is a good number
+data["height"] = data["height"].fillna(avg_height)
+
+# Filling in NaN values with a calculated one 
+avg_height = data["height"].median() # This is probably more accurate
+data["height"] = data["height"].fillna(avg_height)
+
+# Dropping rows with missing values
+# Here we check which rows of "height" aren't null
+# and only keep those
+data = data[pd.notnull(data['height'])]
